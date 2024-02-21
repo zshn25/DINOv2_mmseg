@@ -24,16 +24,16 @@ env_cfg = dict(
     dist_cfg=dict(backend='nccl'),
     mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
 img_ratios = [0.25, 0.4, 0.7, 1.0, 1.25, 1.5]
-# load_from = "fullmodel_ckpt.pt"
+load_from = None
 log_level = 'INFO'
 log_processor = dict(by_epoch=True)
 norm_cfg = dict(requires_grad=True, type='SyncBN')
-optim_wrapper = dict(
-    clip_grad=None,
-    optimizer=dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005),
-    type='OptimWrapper')
 train_cfg = dict(by_epoch=True, max_epochs=1000, val_interval=20)
 optimizer = dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005)
+optim_wrapper = dict(
+    clip_grad=None,
+    optimizer=optimizer,
+    type='OptimWrapper')
 param_scheduler = [
     dict(
         begin=0,
@@ -114,14 +114,13 @@ tta_pipeline = [
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
-    pretrained="../prototyping_dinov2/model.pth",
     backbone=dict(
         type='DinoVisionBackbone',
         size='base',
         img_size=crop_size,
         patch_size=14,
         freeze_vit=True,
-        # init_cfg=dict(type='Pretrained', checkpoint="../prototyping_dinov2/model.pth"),
+        init_cfg=dict(type='Pretrained', checkpoint="../prototyping_dinov2/model.pth"),
         # norm_cfg=norm_cfg,
         # out_indices=[8, 9, 10, 11]
     ),
