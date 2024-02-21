@@ -19,14 +19,14 @@ Training and testing of DINOv2 for segmentation downstream
 - Install mmcv>=2.0 and mmsegmentation >= 1.0. Check https://mmsegmentation.readthedocs.io/en/latest/get_started.html
 
 
-## Training 
+## Training
 
-1. An example config is provided for the Cityscapes dataset in `configs/dinov2_vitb14_cityscapes_ms_config.py`. 
-    Edit the config accoording to your preferences. Refer https://mmsegmentation.readthedocs.io/en/latest/user_guides/1_config.html for more details on the config.
+1. An example config is provided for the Cityscapes dataset in `configs/dinov2_vitb14_cityscapes_ms_config.py`.
+  Edit the config accoording to your preferences. Refer https://mmsegmentation.readthedocs.io/en/latest/user_guides/1_config.html for more details on the config.
 
-    - To load the pretrained backbone and freeze it, change the config's `model.pretrained` to the path to pretrained backbone weights and `model.backbone.freeze_vit = True` to freeze it.
+  - To load the pretrained backbone and freeze it, change the config's `model.pretrained` to the path to pretrained backbone weights and `model.backbone.freeze_vit = True` to freeze it.
 
-    - To load a complete (backbone + head) pretrained model, change the config's `load_from` to the path to the pretrained model file. Alternatively, `resume=True` with automatically find the last_checkpoint from your log_dir and resume training.
+  - To load a complete (backbone + head) pretrained model, change the config's `load_from` to the path to the pretrained model file. Alternatively, `resume=True` with automatically find the last_checkpoint from your log_dir and resume training.
 
 2. To run training, do `CUDA_VISIBLE_DEVICES=1,2,3 python train.py <path-to-config> `. Refer https://mmsegmentation.readthedocs.io/en/latest/user_guides/4_train_test.html
 
@@ -35,6 +35,14 @@ Training and testing of DINOv2 for segmentation downstream
 ## Testing
 
 3. To run test, do `CUDA_VISIBLE_DEVICES=1,2,3 python test.py <path-to-config> <path-to-checkpoint>`. Refer https://mmsegmentation.readthedocs.io/en/latest/user_guides/4_train_test.html
+
+
+## Inference
+
+Checkout segmentation.ipynb for an inference example.
+
+
+![cityscapes foggy intput](https://people.ee.ethz.ch/~csakarid/SFSU_synthetic/images/Foggy_Cityscapes/dusseldorf_000081_000019_leftImg8bit_foggy_beta_0.02.png) ![cityscapes foggy output](https://github.com/zshn25/DINOv2_mmseg/blob/main/assets/image.png?raw=true)
 
 
 # 👩‍⚖️ Licence

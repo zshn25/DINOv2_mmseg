@@ -7,7 +7,6 @@
 import sys
 # Change this to your local path to DINOv2
 sys.path.insert(0, "../../prototyping_dinov2")
-from dinov2.eval.segmentation.models.decode_heads import BNHead
 from dinov2.models.vision_transformer import DinoVisionTransformer, Block, MemEffAttention
 
 from typing import Optional
@@ -27,8 +26,9 @@ class DinoVisionBackbone(DinoVisionTransformer, BaseModule):
         size (str): size of ViT backbone. 'small', 'base', 'large', 'giant'
         freeze_vit (bool): Freezes the entire backbone.
             Default: False
-        pretrained (str, optional): model pretrained path. Default: None.
-        init_cfg (dict or list[dict], optional): Initialization config dict.
+        pretrained (str, optional): model pretrained path. (deprecated, use init_cfg instead)
+            Default: None.
+        init_cfg (dict, optional): Initialization config dict.
             Default: None.
         args, kwargs: Additional args that are passed to DinoVisionTransformer
     """
@@ -42,11 +42,12 @@ class DinoVisionBackbone(DinoVisionTransformer, BaseModule):
     def __init__(self,
                  size: str = "base",
                  freeze_vit: bool = False,
-                 pretrained: Optional[str] = None,
+                 pretrained: Optional[str] = None,  # deprecated
                  init_cfg: Optional[dict] = None,
                  *args, 
                  **kwargs):
 
+        # Update DinoVisionTransformer arguments based on model size
         if "small" in size:
             vit_kwargs = dict(embed_dim=384, depth=12, num_heads=6)
         elif "base" in size:
@@ -56,10 +57,19 @@ class DinoVisionBackbone(DinoVisionTransformer, BaseModule):
         elif "giant" in size:
             vit_kwargs = dict(embed_dim=1536, depth=40, num_heads=24)
         else:
-            raise NotImplementedError(
-                "Choose size from 'small', 'base', 'large', 'giant'")
+            raise NotImplementedError("Choose size from 'small', 'base', 'large', 'giant'")
 
         kwargs.update(**vit_kwargs)
+
+        # Backward compatibility of the pretrained argument
+        assert not (init_cfg and pretrained), \
+            f'init_cfg: {init_cfg} and pretrained: {pretrained}, cannot be set at the same time'
+        if isinstance(pretrained, str):
+            warnings.warn('DeprecationWarning: pretrained is deprecated, '
+                          'please use "init_cfg" instead')
+            self.init_cfg = dict(type='Pretrained', checkpoint=pretrained)
+        elif pretrained is not None:
+            raise TypeError('pretrained must be a str or None')
 
         super(DinoVisionBackbone, self).__init__(
             init_values=1.0,
@@ -73,23 +83,12 @@ class DinoVisionBackbone(DinoVisionTransformer, BaseModule):
                              attn_class=MemEffAttention),
             *args, **kwargs)
 
+        self._is_init = False
+        self.init_cfg = copy.deepcopy(init_cfg)
+
         self.out_index = self.out_indices[size]
 
-        assert not (init_cfg and pretrained), \
-            f'init_cfg: {init_cfg} and pretrained: {pretrained}, cannot be set at the same time'
-        if isinstance(pretrained, str):
-            warnings.warn('DeprecationWarning: pretrained is deprecated, '
-                          'please use "init_cfg" instead')
-            self.init_cfg = dict(type='Pretrained', checkpoint=pretrained)
-        elif pretrained is not None:
-            raise TypeError('pretrained must be a str or None')
-
-        checkpoint = getattr(self.init_cfg, "checkpoint", None)
-
-        if isinstance(checkpoint, str):
-            self.load_state_dict(torch.load(checkpoint))
-        elif checkpoint is not None:
-            raise TypeError('pretrained must be a str or None')
+        BaseModule.init_weights(self)  # explicitly call BaseModule's init_weights as both parent classes have the same named fn
 
         if freeze_vit:
             for param in self.parameters():
