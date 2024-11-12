@@ -3,6 +3,14 @@
 Training and testing of DINOv2 for segmentation downstream
 
 
+<p float="left">
+  <img src="https://people.ee.ethz.ch/~csakarid/SFSU_synthetic/images/Foggy_Cityscapes/dusseldorf_000081_000019_leftImg8bit_foggy_beta_0.02.png" width="49%" />
+  <img src="assets/image.png?raw=true" width="49%" />
+</p>
+
+*Image source: [Semantic Foggy Scene Understanding with Synthetic Data](https://people.ee.ethz.ch/~csakarid/SFSU_synthetic/)*
+
+
 ## ⚙️ Prerequisites
    
 - Clone [DINOv2](https://github.com/facebookresearch/dinov2) repo and edit `train.py`, `test.py`, and `models/backbones/vit_dinov2.py` to change DINOv2's path. Specifically, replace the line `sys.path.append("../prototyping_dinov2")` with your path to DINOv2. This is required in particular if you get the error `KeyError: "EncoderDecoder: 'DinoVisionTransformer is not in the models registry'"`. 
@@ -40,9 +48,6 @@ Training and testing of DINOv2 for segmentation downstream
 ## Inference
 
 Checkout segmentation.ipynb for an inference example.
-
-
-![cityscapes foggy intput](https://people.ee.ethz.ch/~csakarid/SFSU_synthetic/images/Foggy_Cityscapes/dusseldorf_000081_000019_leftImg8bit_foggy_beta_0.02.png) ![cityscapes foggy output](https://github.com/zshn25/DINOv2_mmseg/blob/main/assets/image.png?raw=true)
 
 
 # 👩‍⚖️ Licence
