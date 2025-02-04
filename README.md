@@ -26,6 +26,21 @@ Training and testing of DINOv2 for segmentation downstream
 
 - Install mmcv>=2.0 and mmsegmentation >= 1.0. Check https://mmsegmentation.readthedocs.io/en/latest/get_started.html
 
+    ```bash
+    conda create -n mmseg1.x python=3.9
+    conda activate mmseg1.x
+
+    # pip install -r ../dinov2/requirements.txt  # from dinov2
+
+    pip install -U openmim
+    mim install mmengine
+    mim install "mmcv>=2.0.0"
+
+    git clone -b main https://github.com/open-mmlab/mmsegmentation.git
+    cd mmsegmentation
+    pip install -v -e .
+    ```
+
 
 ## Training
 
